@@ -14,6 +14,7 @@ There are two ways to use this program.
 Here is the current functionality no matter which method you choose.  
 
 - Send `@search <query>`: The server will respond with the top three search results on Google, including the link to the result's page.  It will look like this: 
+
 ![search](http://i.imgur.com/D41qMCj.png)
 - Send `@image <query>`: The server will respond with links to the top three image results on Google Images. Example:
 
