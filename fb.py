@@ -3,6 +3,7 @@ import bs4
 import time
 import re
 import random
+import json
 
 with open("tumblr_links.txt","rb") as f:
 	links = f.read().split("\n")
@@ -10,9 +11,8 @@ with open("tumblr_links.txt","rb") as f:
 
 # email="filler@example.com"
 # password="password"
-# tid="exampleTid" 		- get this from the url of the conversation you open in m.facebook.com
-exec("creds.py")
-fbmsgurl = "https://m.facebook.com/messages/read/?tid=" + tid
+# chatName="First Last-Name"
+execfile("config")
 
 browser = mechanize.Browser()
 browser.set_handle_robots(False)
@@ -28,6 +28,13 @@ browser.select_form(nr = 0)
 browser.form['email'] = email
 browser.form['pass'] = password
 response = browser.submit()
+
+m_page = browser.open("https://m.facebook.com/messages")
+m_soup = bs4.BeautifulSoup(m_page.read())
+tid = m_soup(text=chatName)[0].parent.get('href')
+fbmsgurl = "https://m.facebook.com" + tid
+
+
 
 def google(search_string):
 	brg = mechanize.Browser()
@@ -49,14 +56,8 @@ def google_image(search_string):
 	brg["q"]=search_string
 	responseg = brg.submit()
 	soupg = bs4.BeautifulSoup(responseg.read())
-	m = list(soupg.find("div",{"id":"rg_s"}).children)
-	n = []
-	for i in m:
-		if i != 'm' and i != 'n':
-			n.append(i)
-	return [re.sub("&imgrefurl.*","",x.contents[0].get("href").replace("/imgres?imgurl=","")) for x in n]
-
-
+	meta_data = [json.loads(x.text) for x in soupg.find_all("div",{"class":"rg_meta"})]
+	return [x['ou'] for x in meta_data]
 
 
 def message(send_string,brf):
