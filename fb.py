@@ -4,6 +4,8 @@ import time
 import re
 import random
 import json
+import subprocess
+import sys
 
 with open("tumblr_links.txt","rb") as f:
 	links = f.read().split("\n")
@@ -85,7 +87,31 @@ def main():
 		for ss in b:
 			message(ss,browser)
 	if "@science" in a.text:
+		print "fake science"
 		message(random.choice(links),browser)
+	if "@youtube" in a.text:
+		string = a.find_all("span")[0].text.replace("@youtube ","").encode('ascii','ignore')
+		print "youtube download: ", string
+		p = subprocess.Popen(['youtube-dl',"-f", "mp4", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+		print p.stdout.read()
+		message("Your video is being downloaded!",browser)
+	if "@mp3" in a.text:
+		string = a.find_all("span")[0].text.replace("@mp3 ","").encode('ascii','ignore')
+		print "mp3 download: ", string
+		p = subprocess.Popen(['youtube-dl',"-x", "--audio-format", "mp3", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+		print p.stdout.read()
+		message("Your audio is being downloaded!",browser)
+	if "@help" in a.text:
+		to_send = "Welcome to the Facebook chat companion!  This is the help page.\n" \
+					"***To perform a Google search, send `@search <query>` and you'll get the top 3 results \n"\
+					"***To perform a Google image search, send `@image <query>` and you'll get the top 3 results\n "\
+					"***To get a random science fact, send `@science` \n" \
+					"***To download a youtube video, send `@youtube <url>` \n" \
+					"***To download an mp3 file from lots of websites (e.g. youtube, soundcloud), "\
+					"send `@mp3 <url>` (not guaranteed to work)"
+		message(to_send, browser)
+		message("----end help----",browser)
+		time.sleep(.5)
 
 
 while True:
