@@ -6,16 +6,24 @@ import random
 import json
 import subprocess
 import sys
+import os
 
+# SET-UP: loads tumblr links for the @science functionality
 with open("tumblr_links.txt","rb") as f:
 	links = f.read().split("\n")
 
 
+# SET-UP: checks if the config file exists.  If it doesn't, prompts the user to run `setup.py`
+if not os.path.isfile("config"):
+	print "Please run `python setup.py` first"
+	sys.exit()
 # email="filler@example.com"
 # password="password"
-# chatName="First Last-Name"
+# chatName="First Last-Name"	
 execfile("config")
 
+# SET-UP: creates the browser object which with the correct cookie settings
+		# and user-agent (important)
 browser = mechanize.Browser()
 browser.set_handle_robots(False)
 cookies = mechanize.CookieJar()
@@ -23,7 +31,7 @@ browser.set_cookiejar(cookies)
 browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36')]
 browser.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
 
-
+# SET-UP: logs in to facebook with the credentials provided from the config file
 url = "https://m.facebook.com/"
 browser.open(url)
 browser.select_form(nr = 0)
@@ -31,6 +39,7 @@ browser.form['email'] = email
 browser.form['pass'] = password
 response = browser.submit()
 
+# SET-UP: finds the "thread id" of the facebook chat conversation the user wants to monitor.
 m_page = browser.open("https://m.facebook.com/messages")
 m_soup = bs4.BeautifulSoup(m_page.read())
 tid = m_soup(text=chatName)[0].parent.get('href')
@@ -39,6 +48,8 @@ fbmsgurl = "https://m.facebook.com" + tid
 
 
 def google(search_string):
+	""" Does a google search of the provided query.  Uses a mobile user-agent. 
+		Returns all 10 search results of the search """
 	brg = mechanize.Browser()
 	brg.set_handle_robots( False )
 	brg.addheaders = [('User-agent', 'Mozilla/5.0 (Linux; Android 5.0.2; HTC One_M8 Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.48 Mobile Safari/537.36')]
@@ -50,6 +61,8 @@ def google(search_string):
 	return [x.text + "\n" + list(x.find("h3",{"class","r"}).children)[0].get("href") for x in soupg.find_all("div",{"class":"g card-section"})]
 
 def google_image(search_string):
+	""" Does a google image search of the provided query.  Uses a mobile user-agent. 
+		Returns links all the images on the first page of the results """
 	brg = mechanize.Browser()
 	brg.set_handle_robots( False )
 	brg.addheaders = [('User-agent', 'Mozilla/5.0 (Linux; Android 5.0.2; HTC One_M8 Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.48 Mobile Safari/537.36')]
@@ -63,10 +76,13 @@ def google_image(search_string):
 
 
 def message(send_string,brf):
+	""" Sends a message to the user with the given string
+		Uses the provided browser object (brf) that must
+		be logged in to the user's account """
 	brf.open(fbmsgurl)
 	brf.select_form(nr=1)
 	brf["body"] = send_string
-	browser.submit()
+	brf.submit()
 
 def main():
 	r = browser.open(fbmsgurl)
