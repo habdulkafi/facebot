@@ -23,9 +23,15 @@ Here is the current functionality no matter which method you choose.
 
 ![youtube](http://i.imgur.com/v0z3clN.png)
 ![vid_dl](http://i.imgur.com/WCTVwxw.png)
+
 - Send `@mp3 <url>`:  The server will download the mp3 version of a youtube video, or an mp3 file off of a service like soundcloud.  NOTE: if you want to get mp3s from youtube videos, you have to have ffmpeg (or avconv) installed and in the path of the server.  Example:
 ![mp3](http://i.imgur.com/jzx8W3c.png)
 ![aud_dl](http://i.imgur.com/qHnCyzn.png)
+
+- Send `@joke`: The server will get a random top-25 joke from reddit.com/r/jokes in the past day and send it back.  Example:
+
+![joke](http://i.imgur.com/3hMpG8i.png)
+
 - Bonus:  Send `@science` and the server will respond with a randomly chosen science fact from gathered from tumblr.  Lots of knowledge out there!
 
 
