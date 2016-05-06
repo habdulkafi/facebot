@@ -45,11 +45,17 @@ m_soup = bs4.BeautifulSoup(m_page.read())
 tid = m_soup(text=chatName)[0].parent.get('href')
 fbmsgurl = "https://m.facebook.com" + tid
 
-# jokes_fp = json.loads(browser.open('https://www.reddit.com/r/Jokes/top/.json').read())['data']['children']
-# joke = random.choice(jokes_fp)
-# joke_title = joke['data']['title']
-# joke_url = joke['data']['url']
-# joke_text = json.loads(browser.open(joke_url + '.json').read())[0]['data']['children'][0]['data']['selftext']
+
+
+def get_joke():
+	""" Goes to reddit.com/r/jokes and gets the top 25 jokes of the past day.
+		Randomly selects one and returns the title and the body of the joke """
+	jokes_fp = json.loads(browser.open('https://www.reddit.com/r/Jokes/top/.json').read())['data']['children']
+	joke = random.choice(jokes_fp)
+	joke_title = joke['data']['title']
+	joke_url = joke['data']['url']
+	joke_text = json.loads(browser.open(joke_url + '.json').read())[0]['data']['children'][0]['data']['selftext']
+	return (joke_title, joke_text)
 
 
 
@@ -135,11 +141,7 @@ def main():
 		message("----end help----",browser)
 		time.sleep(.5)
 	if "@joke" in a.text:
-		jokes_fp = json.loads(browser.open('https://www.reddit.com/r/Jokes/top/.json').read())['data']['children']
-		joke = random.choice(jokes_fp)
-		joke_title = joke['data']['title']
-		joke_url = joke['data']['url']
-		joke_text = json.loads(browser.open(joke_url + '.json').read())[0]['data']['children'][0]['data']['selftext']
+		(joke_title,joke_text) = get_joke()
 		message(joke_title, browser)
 		message(joke_text, browser)
 
