@@ -91,10 +91,14 @@ def message(send_string,brf):
 	""" Sends a message to the user with the given string
 		Uses the provided browser object (brf) that must
 		be logged in to the user's account """
-	brf.open(fbmsgurl)
-	brf.select_form(nr=1)
-	brf["body"] = send_string
-	brf.submit()
+	try:
+		brf.open(fbmsgurl)
+		brf.select_form(nr=1)
+		brf["body"] = send_string
+		brf.submit()
+		return True
+	except:
+		return False
 
 def main():
 	r = browser.open(fbmsgurl)
@@ -136,6 +140,7 @@ def main():
 					"***To get a random science fact, send `@science` \n" \
 					"***To download a youtube video, send `@youtube <url>` \n" \
 					"***To download an mp3 file from lots of websites (e.g. youtube, soundcloud), "\
+					"***To get a joke from reddit, send `@joke`"\
 					"send `@mp3 <url>` (not guaranteed to work)"
 		message(to_send, browser)
 		message("----end help----",browser)
@@ -145,7 +150,7 @@ def main():
 		message(joke_title, browser)
 		message(joke_text, browser)
 
-
-while True:
-	main()
-	time.sleep(.5)
+if __name__ == "__main__":
+	while True:
+		main()
+		time.sleep(.5)

@@ -22,7 +22,7 @@ print "To use this program, you will need a Facebook account that does NOT have 
 		"the chat conversation this bot is going to be connected to.  Basically, if \n" \
 		"it's a group conversation, then you gotta put the full name of that \n" \
 		"conversation that you see on Facebook.  If it's an individual person, then \n" \
-		"their name (as it appears on Facebook) is what you need to enter\n" 
+		"their name (as it appears on Facebook) is what you need to enter\n" \
 		"NOTE: The chat conversation must first *exist* before setting this up!\n"
 
 email = raw_input("----Enter your Email Address: ")
