@@ -46,6 +46,12 @@ tid = m_soup(text=chatName)[0].parent.get('href')
 fbmsgurl = "https://m.facebook.com" + tid
 
 
+regexyoutube = re.compile("@youtube.*")
+regexmp3 = re.compile("@mp3.*")
+regeximage= re.compile("@image.*")
+regexsearch =re.compile("@search.*")
+
+
 
 def get_joke():
 	""" Goes to reddit.com/r/jokes and gets the top 25 jokes of the past day.
@@ -70,7 +76,7 @@ def google(search_string):
 	brg["q"]=search_string
 	responseg = brg.submit()
 	soupg = bs4.BeautifulSoup(responseg.read())
-	return [x.text + "\n" + list(x.find("h3",{"class","r"}).children)[0].get("href") for x in soupg.find_all("div",{"class":"g card-section"})]
+	return [x.text + "\n" + x.find('a', href=True)['href'] for x in soupg.find_all("div",{"class":"g card-section"})]
 
 def google_image(search_string):
 	""" Does a google image search of the provided query.  Uses a mobile user-agent. 
@@ -105,35 +111,43 @@ def main():
 	soup = bs4.BeautifulSoup(r)
 	a = list(list(soup.find_all("div",{"id":"messageGroup"})[0].children)[1].children)[-1]
 	if "@search" in a.text:
-		string = a.find_all("span")[0].text.replace("@search ","")
-		print "google search: ", string
-		b = google(string)[0:3]
-		b.reverse()
-		for ss in b:
-			ss = ''.join([i if ord(i) < 128 else ' ' for i in ss])
-			message(ss,browser)	
-	if "@image" in a.text:
-		string = a.find_all("span")[0].text.replace("@image ","")
-		print "image search: ", string
-		b = google_image(string)[0:3]
-		for ss in b:
-			message(ss,browser)
-	if "@science" in a.text:
+		string = a(text=regexsearch)[0].parent.text.replace("@search ","")
+		if string != "@search":
+			print "google search: ", string
+			b = google(string)[0:3]
+			b.reverse()
+			for ss in b:
+				ss = ''.join([i if ord(i) < 128 else ' ' for i in ss])
+				message(ss,browser)	
+	elif "@image" in a.text:
+		string = a(text=regeximage)[0].parent.text.replace("@image ","")
+		if string != "@image":
+			print "image search: ", string
+			b = google_image(string)[0:3]
+			for ss in b:
+				message(ss,browser)
+	elif "@science" in a.text:
 		print "fake science"
 		message(random.choice(links),browser)
-	if "@youtube" in a.text:
-		string = a.find_all("span")[0].text.replace("@youtube ","").encode('ascii','ignore')
-		print "youtube download: ", string
-		p = subprocess.Popen(['youtube-dl',"-f", "mp4", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-		print p.stdout.read()
-		message("Your video is being downloaded!",browser)
-	if "@mp3" in a.text:
-		string = a.find_all("span")[0].text.replace("@mp3 ","").encode('ascii','ignore')
-		print "mp3 download: ", string
-		p = subprocess.Popen(['youtube-dl',"-x", "--audio-format", "mp3", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-		print p.stdout.read()
-		message("Your audio is being downloaded!",browser)
-	if "@help" in a.text:
+	elif "@youtube" in a.text:
+		# string = a.find_all("span")[0].text.replace("@youtube ","").encode('ascii','ignore')
+		# string = re.findall(regexyoutube,a.find_all("span")[0].text)[0].replace("@youtube ","").encode('ascii','ignore')
+		string = a(text=regexyoutube)[0].parent.text.replace("@youtube ","").encode('ascii','ignore')
+		if string != "@youtube":
+			print "youtube download: ", string
+			p = subprocess.Popen(['youtube-dl',"-f", "mp4", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+			print p.stdout.read()
+			message("Your video is being downloaded!",browser)
+	elif "@mp3" in a.text:
+		# string = re.findall(regexmp3,a.find_all("span")[0].text)[0].replace("@mp3 ","").encode('ascii','ignore')
+		# string = a.find_all("span")[0].text.replace("@mp3 ","").encode('ascii','ignore')
+		string = a(text=regexmp3)[0].parent.text.replace("@mp3 ","").encode('ascii','ignore')
+		if string != "@mp3":
+			print "mp3 download: ", string
+			p = subprocess.Popen(['youtube-dl',"-x", "--audio-format", "mp3", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+			print p.stdout.read()
+			message("Your audio is being downloaded!",browser)
+	elif "@help" in a.text:
 		to_send = "Welcome to the Facebook chat companion!  This is the help page.\n" \
 					"***To perform a Google search, send `@search <query>` and you'll get the top 3 results \n"\
 					"***To perform a Google image search, send `@image <query>` and you'll get the top 3 results\n "\
@@ -145,7 +159,8 @@ def main():
 		message(to_send, browser)
 		message("----end help----",browser)
 		time.sleep(.5)
-	if "@joke" in a.text:
+	elif "@joke" in a.text:
+		print "joke"
 		(joke_title,joke_text) = get_joke()
 		message(joke_title, browser)
 		message(joke_text, browser)
