@@ -45,7 +45,7 @@ m_soup = bs4.BeautifulSoup(m_page.read())
 tid = m_soup(text=chatName)[0].parent.get('href')
 fbmsgurl = "https://m.facebook.com" + tid
 
-
+# Pre-compile regular expressions for use later
 regexyoutube = re.compile("@youtube.*")
 regexmp3 = re.compile("@mp3.*")
 regeximage= re.compile("@image.*")
@@ -56,41 +56,53 @@ regexsearch =re.compile("@search.*")
 def get_joke():
 	""" Goes to reddit.com/r/jokes and gets the top 25 jokes of the past day.
 		Randomly selects one and returns the title and the body of the joke """
-	jokes_fp = json.loads(browser.open('https://www.reddit.com/r/Jokes/top/.json').read())['data']['children']
-	joke = random.choice(jokes_fp)
-	joke_title = joke['data']['title']
-	joke_url = joke['data']['url']
-	joke_text = json.loads(browser.open(joke_url + '.json').read())[0]['data']['children'][0]['data']['selftext']
-	return (joke_title, joke_text)
+	try:
+		jokes_fp = json.loads(browser.open('https://www.reddit.com/r/Jokes/top/.json').read())['data']['children']
+		joke = random.choice(jokes_fp)
+		joke_title = joke['data']['title']
+		joke_url = joke['data']['url']
+		joke_text = json.loads(browser.open(joke_url + '.json').read())[0]['data']['children'][0]['data']['selftext']
+		return (joke_title.encode('ascii','ignore'), joke_text.encode('ascii','ignore'))
+	except:
+		print "joke error"
+		return ("","")
 
 
 
 def google(search_string):
 	""" Does a google search of the provided query.  Uses a mobile user-agent. 
 		Returns all 10 search results of the search """
-	brg = mechanize.Browser()
-	brg.set_handle_robots( False )
-	brg.addheaders = [('User-agent', 'Mozilla/5.0 (Linux; Android 5.0.2; HTC One_M8 Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.48 Mobile Safari/537.36')]
-	brg.open( "http://google.com" )
-	brg.select_form(nr=0)
-	brg["q"]=search_string
-	responseg = brg.submit()
-	soupg = bs4.BeautifulSoup(responseg.read())
-	return [x.text + "\n" + x.find('a', href=True)['href'] for x in soupg.find_all("div",{"class":"g card-section"})]
+	try:
+		brg = mechanize.Browser()
+		brg.set_handle_robots( False )
+		brg.addheaders = [('User-agent', 'Mozilla/5.0 (Linux; Android 5.0.2; HTC One_M8 Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.48 Mobile Safari/537.36')]
+		brg.open( "http://google.com" )
+		brg.select_form(nr=0)
+		brg["q"]=search_string
+		responseg = brg.submit()
+		soupg = bs4.BeautifulSoup(responseg.read())
+		return [x.text + "\n" + x.find('a', href=True)['href'] for x in soupg.find_all("div",{"class":"g card-section"})]
+	except:
+		print "google error"
+		return ["" for _ in range(10)]
 
 def google_image(search_string):
 	""" Does a google image search of the provided query.  Uses a mobile user-agent. 
 		Returns links all the images on the first page of the results """
-	brg = mechanize.Browser()
-	brg.set_handle_robots( False )
-	brg.addheaders = [('User-agent', 'Mozilla/5.0 (Linux; Android 5.0.2; HTC One_M8 Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.48 Mobile Safari/537.36')]
-	brg.open( "http://www.images.google.com" )
-	brg.select_form(nr=0)
-	brg["q"]=search_string
-	responseg = brg.submit()
-	soupg = bs4.BeautifulSoup(responseg.read())
-	meta_data = [json.loads(x.text) for x in soupg.find_all("div",{"class":"rg_meta"})]
-	return [x['ou'] for x in meta_data]
+	try:
+		brg = mechanize.Browser()
+		brg.set_handle_robots( False )
+		brg.addheaders = [('User-agent', 'Mozilla/5.0 (Linux; Android 5.0.2; HTC One_M8 Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.48 Mobile Safari/537.36')]
+		brg.open( "http://www.images.google.com" )
+		brg.select_form(nr=0)
+		brg["q"]=search_string
+		responseg = brg.submit()
+		soupg = bs4.BeautifulSoup(responseg.read())
+		meta_data = [json.loads(x.text) for x in soupg.find_all("div",{"class":"rg_meta"})]
+		return [x['ou'] for x in meta_data]
+	except:
+		print "image error"
+		return ["" for _ in range(10)]
 
 
 def message(send_string,brf):
@@ -130,8 +142,6 @@ def main():
 		print "fake science"
 		message(random.choice(links),browser)
 	elif "@youtube" in a.text:
-		# string = a.find_all("span")[0].text.replace("@youtube ","").encode('ascii','ignore')
-		# string = re.findall(regexyoutube,a.find_all("span")[0].text)[0].replace("@youtube ","").encode('ascii','ignore')
 		string = a(text=regexyoutube)[0].parent.text.replace("@youtube ","").encode('ascii','ignore')
 		if string != "@youtube":
 			print "youtube download: ", string
@@ -139,8 +149,6 @@ def main():
 			print p.stdout.read()
 			message("Your video is being downloaded!",browser)
 	elif "@mp3" in a.text:
-		# string = re.findall(regexmp3,a.find_all("span")[0].text)[0].replace("@mp3 ","").encode('ascii','ignore')
-		# string = a.find_all("span")[0].text.replace("@mp3 ","").encode('ascii','ignore')
 		string = a(text=regexmp3)[0].parent.text.replace("@mp3 ","").encode('ascii','ignore')
 		if string != "@mp3":
 			print "mp3 download: ", string
@@ -162,6 +170,7 @@ def main():
 	elif "@joke" in a.text:
 		print "joke"
 		(joke_title,joke_text) = get_joke()
+		# print joke_title,joke_text
 		message(joke_title, browser)
 		message(joke_text, browser)
 
