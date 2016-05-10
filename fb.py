@@ -72,6 +72,7 @@ def login_setup():
 
 
 def logout(browser):
+	""" Logs out of Facebook """
 	browser.open("https://m.facebook.com/")
 	browser.follow_link(list(browser.links(text_regex = 'Logout'))[0])
 
