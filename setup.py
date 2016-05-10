@@ -1,5 +1,6 @@
 import sys
 import os
+import readline
 try:
 	import mechanize
 	import bs4
