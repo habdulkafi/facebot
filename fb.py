@@ -22,6 +22,11 @@ if not os.path.isfile("config"):
 # chatName="First Last-Name"	
 execfile("config")
 
+if pref == "yes":
+	allow = True
+else:
+	allow = False
+
 # SET-UP: creates the browser object which with the correct cookie settings
 		# and user-agent (important)
 browser = mechanize.Browser()
@@ -122,6 +127,7 @@ def main():
 	r = browser.open(fbmsgurl)
 	soup = bs4.BeautifulSoup(r)
 	a = list(list(soup.find_all("div",{"id":"messageGroup"})[0].children)[1].children)[-1]
+	# print a
 	if "@search" in a.text:
 		string = a(text=regexsearch)[0].parent.text.replace("@search ","")
 		if string != "@search":
@@ -143,14 +149,15 @@ def main():
 		message(random.choice(links),browser)
 	elif "@youtube" in a.text:
 		string = a(text=regexyoutube)[0].parent.text.replace("@youtube ","").encode('ascii','ignore')
-		if string != "@youtube":
+		if string != "@youtube" and (allow or a.find('strong').text == name):
+			print a.find('strong')
 			print "youtube download: ", string
 			p = subprocess.Popen(['youtube-dl',"-f", "mp4", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
 			print p.stdout.read()
 			message("Your video is being downloaded!",browser)
 	elif "@mp3" in a.text:
 		string = a(text=regexmp3)[0].parent.text.replace("@mp3 ","").encode('ascii','ignore')
-		if string != "@mp3":
+		if string != "@mp3" and (allow or a.find('strong').text == name):
 			print "mp3 download: ", string
 			p = subprocess.Popen(['youtube-dl',"-x", "--audio-format", "mp3", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
 			print p.stdout.read()

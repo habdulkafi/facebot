@@ -25,14 +25,20 @@ print "To use this program, you will need a Facebook account that does NOT have 
 		"their name (as it appears on Facebook) is what you need to enter\n" \
 		"NOTE: The chat conversation must first *exist* before setting this up!\n"
 
+
+name = raw_input("----Enter your Name (exactly): ")
+print "\n"
 email = raw_input("----Enter your Email Address: ")
 print "\n"
 password = raw_input("----Enter your password: ")
 print "\n"
 chatname = raw_input("----Enter the chat name: ")
 print "\n"
+pref = raw_input("----Enter your permission preference [yes/no]: ")
+print "\n"
 confirm = raw_input("To confirm, type y if the following is correct: \n"\
-		"Email: " + email + "\nPassword: " + password + "\nChatname: " + chatname + "\n[y/n]:")
+		"Name: " + name + "\nEmail: " + email + "\nPassword: " + password + "\nChatname: " \
+		+ chatname + "\nPreference: " + pref + "\n[y/n]:")
 print "\n"
 if confirm != 'y':
 	print "Exiting"
@@ -42,6 +48,8 @@ with open('config','wb') as f:
 	f.write('email="' + email + '"\n')
 	f.write('password="' + password + '"\n')
 	f.write('chatName="' + chatname + '"\n')
+	f.write('pref="' + pref + '"\n')
+	f.write('name="' + name + '"\n')
 
 status = os.system('which youtube-dl')
 
