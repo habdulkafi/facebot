@@ -1,6 +1,7 @@
 import pdb
 import unittest
 import sys
+import os
 
 import fb
 
@@ -75,11 +76,20 @@ class fbTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
 	if len(sys.argv) == 1:
-		print "Usage:\n   python main.py help -- prints the help \n"\
-				"   python main.py run_tests -- runs the tests \n" \
-				"   python main.py debug -- runs program with debug"
-		sys.exit()
-	if sys.argv[1] == "run_tests":
+		os.system(sys.executable + ' setup.py')
+		os.system(sys.executable + ' fb.py')
+	elif sys.argv[1] == "run_tests":
 		del sys.argv[1:]
 		unittest.main()
+	elif sys.argv[1] == "debug":
+		os.system(sys.executable + ' setup.py')
+		os.system(sys.executable + ' fb.py debug')
+	elif sys.argv[1] == "help":
+		print "To understand how the entire program works, please visit:\n"\
+		"      https://github.com/habdulkafi/facebook-bot/blob/master/README.md"
+		print "Usage:\n   python main.py help      -- prints this help and exits \n"\
+				"   python main.py run_tests -- runs the tests \n" \
+				"   python main.py debug     -- runs setup.py then runs fb.py with debug \n"\
+				"   python main.py run       -- runs the whole program (setup.py and fb.py)"
+
 

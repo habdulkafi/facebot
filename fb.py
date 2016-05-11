@@ -8,6 +8,7 @@ import subprocess
 import sys
 import os
 import traceback
+import pdb
 
 # SET-UP: loads tumblr links for the @science functionality
 with open("tumblr_links.txt","rb") as f:
@@ -203,6 +204,10 @@ def main(browser,fbmsgurl,mbrowser):
 		message(joke_text, browser,fbmsgurl)
 
 if __name__ == "__main__":
+	if len(sys.argv)>1:
+		if sys.argv[1] == 'debug':
+			pdb.set_trace()
+
 	print "logging in"
 	(browser,fbmsgurl,mbrowser) = login_setup()
 	print "logged in.  press ctrl+c to log out"
