@@ -8,23 +8,27 @@ except:
 	print "mechanize and bs4 must be installed.  \n" \
 	"--- pip install mechanize\n" \
 	"--- pip install bs4\n" \
-	"--- pip install youtube-dl"
+	"--- sudo pip install youtube-dl"
 	sys.exit()
 
 
 
 
-print "Welcome to the Python Facebook Bot!"
+print "Welcome to the facebot!"
 print "To use this program, you will need a Facebook account that does NOT have \n" \
 		"two-factor authentication enabled.  \n" \
-		"To start out, you will need to enter your Facebook-connected email address \n" \
-		"along with the password associated with it.  Don't worry, I promise there's \n" \
-		"no way for me to find out your password.  You'll also need to enter the name of \n" \
-		"the chat conversation this bot is going to be connected to.  Basically, if \n" \
-		"it's a group conversation, then you gotta put the full name of that \n" \
-		"conversation that you see on Facebook.  If it's an individual person, then \n" \
-		"their name (as it appears on Facebook) is what you need to enter\n" \
-		"NOTE: The chat conversation must first *exist* before setting this up!\n"
+		"To start out, you will need to enter your exact name on Facebook, the \n" \
+		"email address associated with your account, and your password. Don't \n" \
+		"worry, I promise there's no way for me to find out your password.  \n" \
+		"You'll also need to enter the name of the chat conversation this bot \n" \
+		"is going to be connected to.  Basically, if it's a group conversation,\n" \
+		"then you gotta put the full name of that conversation that you see on\n" \
+		"Facebook. If it's an individual person, then their name (as it appears \n" \
+		"on Facebook) is what you need to enter. NOTE: The chat conversation\n" \
+		"must first *exist* before setting this up! \n"\
+		"Sometimes, you don't want your conversation partner to start downloads \n" \
+		"to your server without your permission.  If you don't want this, answer `no` \n"\
+		"to the `permission preference` question.  Otherwise, answer `yes`.\n"
 
 
 name = raw_input("----Enter your Name (exactly): ")

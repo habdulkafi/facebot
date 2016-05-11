@@ -8,6 +8,7 @@ Unlike the newly released facebook chatbot stuff, this chat companion is more pr
 
 There are two ways to use this program.  
 1) Connect it to your own personal facebook to augment current conversations you have with other people (can be confusing since all the messages will look like they're being sent by your account)
+
 2) Connect it to a fake facebook account and set it up so it's more like a utility to speed things up in a mobile environment. 
 
 If you choose option 1 (and you don't trust your friends), you can set up permissions so that *only you* can start youtube/mp3 downloads.  This will prevent your friends from spamming you and filling up your server.
