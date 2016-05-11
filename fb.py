@@ -1,3 +1,10 @@
+#
+# Husam Abdul-Kafi
+# 05/11/16
+#
+
+
+
 import mechanize
 import bs4
 import time
