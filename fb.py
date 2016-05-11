@@ -30,7 +30,7 @@ else:
 	allow = False
 
 
-# Pre-compile regular expressions for use later
+# SET-UP: Pre-compile regular expressions for use later
 regexyoutube = re.compile("@youtube.*")
 regexmp3 = re.compile("@mp3.*")
 regeximage= re.compile("@image.*")
@@ -100,8 +100,7 @@ def get_joke(browser):
 def google(search_string,brg):
 	""" Does a google search of the provided query.  Uses a mobile user-agent. 
 		Returns all 10 search results of the search """
-	try:
-		
+	try:		
 		brg.open( "http://google.com" )
 		brg.select_form(nr=0)
 		brg["q"]=search_string
@@ -129,7 +128,6 @@ def google_image(search_string,brg):
 		print "image error"
 		return ["" for _ in range(10)]
 
-
 def message(send_string,brf,fbmsgurl):
 	""" Sends a message to the user with the given string
 		Uses the provided browser object (brf) that must
@@ -149,7 +147,6 @@ def main(browser,fbmsgurl,mbrowser):
 	r = browser.open(fbmsgurl)
 	soup = bs4.BeautifulSoup(r, "html5lib")
 	a = list(list(soup.find_all("div",{"id":"messageGroup"})[0].children)[1].children)[-1]
-	# print a
 	if "@search" in a.text:
 		string = a(text=regexsearch)[0].parent.text.replace("@search ","")
 		if string != "@search":
@@ -172,7 +169,6 @@ def main(browser,fbmsgurl,mbrowser):
 	elif "@youtube" in a.text:
 		string = a(text=regexyoutube)[0].parent.text.replace("@youtube ","").encode('ascii','ignore')
 		if string != "@youtube" and (allow or a.find('strong').text == name):
-			print a.find('strong')
 			print "youtube download: ", string
 			p = subprocess.Popen(['youtube-dl',"-f", "mp4", string],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
 			print p.stdout.read()
@@ -199,7 +195,6 @@ def main(browser,fbmsgurl,mbrowser):
 	elif "@joke" in a.text:
 		print "joke"
 		(joke_title,joke_text) = get_joke(mbrowser)
-		# print joke_title,joke_text
 		message(joke_title, browser,fbmsgurl)
 		message(joke_text, browser,fbmsgurl)
 
