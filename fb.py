@@ -42,6 +42,7 @@ regexyoutube = re.compile("@youtube.*")
 regexmp3 = re.compile("@mp3.*")
 regeximage= re.compile("@image.*")
 regexsearch =re.compile("@search.*")
+regexname = re.compile(chatName+ '.*')
 
 def login_setup():
 
@@ -66,7 +67,7 @@ def login_setup():
 
 		m_page = browser.open("https://m.facebook.com/messages")
 		m_soup = bs4.BeautifulSoup(m_page.read(), "html5lib")
-		tid = m_soup(text=chatName)[0].parent.get('href')
+		tid = m_soup(text=regexname)[0].parent.get('href')
 		fbmsgurl = "https://m.facebook.com" + tid
 
 		mbrowser = mechanize.Browser()
@@ -76,7 +77,7 @@ def login_setup():
 	except:
 		traceback.print_exc()
 		print "Login Failed"
-		return ('','')
+		return ('','','')
 
 
 def logout(browser):
